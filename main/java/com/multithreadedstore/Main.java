@@ -1,8 +1,9 @@
 package com.multithreadedstore;
 
-import com.multithreadedstore.customer.Customer;
-import com.multithreadedstore.product.Product;
-import com.multithreadedstore.store.Store;
+import com.multithreadedstore.models.Customer;
+import com.multithreadedstore.models.Product;
+import com.multithreadedstore.models.Store;
+import com.multithreadedstore.service.StoreImplementation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,45 +11,54 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Main thread has started..");
-        Product shirt = new Product("Gucci", 12000, 10);
-        Product sneakers = new Product("Nike", 10000, 10);
-        Product belt = new Product("Prada", 12000, 10);
-        Product glasses = new Product("Givenchy", 1000, 10);
-        Product socks = new Product("Off White", 2000, 10);
-        List<Product> products = new ArrayList<>(List.of(shirt, sneakers, belt, glasses, socks));
-        Store store = new Store("Odumeje Stores", products, 20000);
+
+        Product p1 = new Product("rice", 12000, 10);
+        Product p2 = new Product("bean", 10000, 10);
+        Product p3 = new Product("fish", 12000, 10);
+        Product p4 = new Product("bread", 1000, 10);
+        Product p5 = new Product("onion", 2000, 10);
+        List<Product> products = new ArrayList<>(List.of(p1, p2, p3, p4, p5));
+
+        Store store = new Store("BestBUY", products, 20000);
+       StoreImplementation storeImplementation =  new StoreImplementation(store);
 
 
-        Customer c1 = new Customer("Tony", 1_200, store);
-        Customer c2 = new Customer("Tinubu", 200_000, store);
-        Customer c3 = new Customer("Isaac", 500_000, store);
-        Customer c4 = new Customer("Bola", 100_000, store);
+        Customer tony = new Customer("Tony", 1_200, storeImplementation);
+        Customer john = new Customer("John", 200_000, storeImplementation);
+        Customer isaac = new Customer("Isaac", 500_000, storeImplementation);
+        Customer peter = new Customer("peter", 100_000, storeImplementation);
 
-        c1.addToCart(shirt, 2);
-        c1.addToCart(sneakers, 2);
-        c1.addToCart(belt, 1);
+        tony.addToCart(p1, 2);
+        tony.addToCart(p2, 2);
+        tony.addToCart(p3, 1);
 
-        c2.addToCart(shirt, 1);
+        john.addToCart(p1, 4);
 
-        c3.addToCart(shirt, 1);
+        isaac.addToCart(p4, 3);
 
-        c4.addToCart(shirt, 1);
-        c4.addToCart(belt, 1);
+        peter.addToCart(p3, 5);
+        peter.addToCart(p5, 2);
 
-        Thread t1 = new Thread(c1, c1.getName());
-        Thread t2 = new Thread(c2, c2.getName());
-        Thread t3 = new Thread(c3, c3.getName());
-        Thread t4 = new Thread(c4, c4.getName());
+        Thread t1 = new Thread(tony, tony.getName());
+        Thread t2 = new Thread(john, john.getName());
+        Thread t3 = new Thread(isaac, isaac.getName());
+        Thread t4 = new Thread(peter, peter.getName());
 
-        t1.start(); t2.start(); t3.start(); t4.start();
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
         try {
-            t1.join();t2.join();t3.join();t4.join();
+            t1.join();
+            t2.join();
+            t3.join();
+            t4.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Store products: " + store.getStoreProducts());
-        System.out.println("Store balance: $" + store.getStoreBalance());
-        System.out.println("Main thread has ended..");
+        System.out.println("Store products: " + store.getProductList());
+        System.out.println("Store balance: #" + store.getStoreBalance());
+
+
     }
 }

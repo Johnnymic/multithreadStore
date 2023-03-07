@@ -1,7 +1,6 @@
-package com.multithreadedstore.customer;
+package com.multithreadedstore.models;
 
-import com.multithreadedstore.product.Product;
-import com.multithreadedstore.store.Store;
+import com.multithreadedstore.service.StoreImplementation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +9,14 @@ public class Customer implements Runnable{
     private final String name;
     private final List<Product> cart;
     private double customerBalance;
-    private final Store store;
+    private StoreImplementation implementation;
 
 
-    public Customer(String name, double customerBalance, Store store) {
+
+    public Customer(String name, double customerBalance, StoreImplementation implemenation) {
         this.name = name;
         this.customerBalance = customerBalance;
-        this.store = store;
+        this.implementation = implemenation;
         this.cart = new ArrayList<>();
     }
 
@@ -28,13 +28,7 @@ public class Customer implements Runnable{
         Product newProduct = new Product(product.getName(), product.getProductPrice(), quantity);
         cart.add(newProduct);
     }
-    public void makePurchase(){
-        try {
-            store.receiveOrders(this);
-        } catch (RuntimeException e) {
-            System.err.println(e.getMessage());
-        }
-    }
+
 
     public List<Product> getCart() {
         return cart;
@@ -52,6 +46,15 @@ public class Customer implements Runnable{
         return customerBalance >= amount;
     }
 
+
+    public void purchaseItems(){
+        try {
+            implementation.receiveOrders(this);
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     @Override
     public void run() {
         try {
@@ -59,8 +62,8 @@ public class Customer implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        makePurchase();
-        String message = String.format("%s is making purchase ...", name);
-        System.out.println(message);
+        purchaseItems();
+        String message = String.format("%s bought the following  ...", name );
+        System.out.println(message + " ");
     }
 }
